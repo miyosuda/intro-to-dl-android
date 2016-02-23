@@ -39,8 +39,11 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 	private PointF mTmpPiont = new PointF();
 
+	// Javaによる文字認識を行う場合
 	//private JavaDigitDetector mDetector = new JavaDigitDetector();
-	private DigitDetector mDetector = new DigitDetector();
+
+	// TensorFlowを使った文字認識を行う場合
+	private TensorFlowDigitDetector mDetector = new TensorFlowDigitDetector();
 
 	@SuppressWarnings("SuspiciousNameCombination")
 	@Override

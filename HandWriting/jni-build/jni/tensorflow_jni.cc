@@ -148,7 +148,7 @@ static int process(const int* pixels) {
 			max_score = score;
 		}
 		
-		VLOG(0) <<  " (" << i << "): " << score;
+		VLOG(0) <<  " output[" << i << "] = " << score;
 	}
 	
 	return maxIndex;

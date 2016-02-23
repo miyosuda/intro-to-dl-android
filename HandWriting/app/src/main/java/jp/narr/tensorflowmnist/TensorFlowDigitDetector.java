@@ -21,10 +21,12 @@ import android.content.res.AssetManager;
 
 /**
  * Handwritten digit detector.
+ * TensorFlowを使った文字認識.
+ *
  * <p/>
  * Created by miyoshi on 16/01/17.
  */
-public class DigitDetector {
+public class TensorFlowDigitDetector {
 	static {
 		System.loadLibrary("tensorflow_mnist");
 	}
@@ -32,19 +34,22 @@ public class DigitDetector {
 	private native int init(AssetManager assetManager, String model);
 
 	/**
-	 * draw pixels
+	 * JNIのコードを呼び出す.
 	 */
 	public native int detectDigit(int[] pixels);
 
 	public boolean setup(Context context) {
 		AssetManager assetManager = context.getAssets();
 
-		// model from beginner tutorial
-		//int ret = init(assetManager, "file:///android_asset/beginner-graph.pb");
+		// TensorFlow "Beginner tutorial"によるモデルを利用する場合
+		// (内容はJavaDigitDetectorと同じもの)
+		//String modelPath = "file:///android_asset/beginner-graph.pb";
 
-		// model from expert tutorial
-		int ret = init(assetManager, "file:///android_asset/expert-graph.pb");
+		// TensorFlow "Expert tutorial"によるモデルを利用する場合
+		// Deep Learningを利用しており、精度が高い
+		String modelPath = "file:///android_asset/expert-graph.pb";
 
+		int ret = init(assetManager, modelPath);
 		return ret >= 0;
 	}
 }

@@ -26,7 +26,7 @@ extern "C" {
 #endif  // __cplusplus
 
 #define TENSORFLOW_METHOD(METHOD_NAME) \
-  Java_jp_narr_tensorflowmnist_DigitDetector_##METHOD_NAME  // NOLINT
+  Java_jp_narr_tensorflowmnist_TensorFlowDigitDetector_##METHOD_NAME  // NOLINT
 
 JNIEXPORT jint JNICALL
 TENSORFLOW_METHOD(init)(
