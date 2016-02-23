@@ -155,12 +155,16 @@ public class DrawView extends View {
 		int height = mOffscreenBitmap.getHeight();
 
 		// Get 28x28 pixel data from bitmap
+		// ビットマップから28x28の画像値を得る.
 		int[] pixels = new int[width * height];
 		mOffscreenBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
 		int[] retPixels = new int[pixels.length];
 		for (int i = 0; i < pixels.length; ++i) {
 			// Set 0 for white and 255 for black pixel
+			// BitmapはARGBの32bitなので、下位8bitのB値だけを取り出す.
+			// 元は、255=白, 0=黒からなので、
+			// 0=白、255=黒とする為、値を反転させておく.
 			int pix = pixels[i];
 			int b = pix & 0xff;
 			retPixels[i] = 0xff - b;

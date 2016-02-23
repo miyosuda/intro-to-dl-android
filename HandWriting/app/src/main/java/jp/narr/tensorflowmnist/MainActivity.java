@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
 	private PointF mTmpPiont = new PointF();
 
+	//private JavaDigitDetector mDetector = new JavaDigitDetector();
 	private DigitDetector mDetector = new DigitDetector();
-
 
 	@SuppressWarnings("SuspiciousNameCombination")
 	@Override
@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 	}
 
 	private void onDetectClicked() {
+		// ピクセルデータ(28x28のint値(0〜255)を得る
 		int pixels[] = mDrawView.getPixelData();
 		int digit = mDetector.detectDigit(pixels);
 
