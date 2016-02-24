@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 /**
- * Javaによる手書き文字認識.
- * (精度は低い)
+ * Javaによる手書き文字認識. (低精度)
+ *
+ * (判りやすさ優先であえてマジックナンバーを残しています)
+ *
  * <p/>
  * Created by miyoshi on 16/02/24.
  */
@@ -200,6 +202,5 @@ public class JavaDigitDetector {
 				}
 			}
 		}
-
 	}
 }
