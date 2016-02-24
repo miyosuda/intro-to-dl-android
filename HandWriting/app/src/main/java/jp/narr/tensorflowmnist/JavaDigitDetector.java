@@ -36,8 +36,8 @@ import java.util.StringTokenizer;
 public class JavaDigitDetector {
 	private static final String TAG = "JavaDigitDetector";
 
-	// 768x10のweight値
-	private float[][] weightW = new float[768][10];
+	// 784x10のweight値
+	private float[][] weightW = new float[784][10];
 	// 10個のbias値
 	private float[] weightB = new float[10];
 
@@ -49,8 +49,8 @@ public class JavaDigitDetector {
 	 */
 	public int detectDigit(int[] pixels) {
 		// 0 ~ 255 のpixel値を 0.0 ~ 1.0 のfloatに変換し、それをinputとする.
-		float[] input = new float[768];
-		for (int i = 0; i < 768; ++i) {
+		float[] input = new float[784];
+		for (int i = 0; i < 784; ++i) {
 			input[i] = (float) pixels[i] * (1.0f / 255.0f);
 		}
 
@@ -58,7 +58,7 @@ public class JavaDigitDetector {
 		float[] output = new float[10];
 
 		// input と weightW の掛け算を行う
-		for (int j = 0; j < 768; ++j) {
+		for (int j = 0; j < 784; ++j) {
 			for (int i = 0; i < 10; ++i) {
 				output[i] += input[j] * weightW[j][i];
 			}
@@ -137,7 +137,7 @@ public class JavaDigitDetector {
 		}
 
 		// weightWの設定
-		for (int j = 0; j < 768; ++j) {
+		for (int j = 0; j < 784; ++j) {
 			String line = linesW.get(j);
 			float values[] = splitLine(line);
 			for (int i = 0; i < 10; ++i) {
