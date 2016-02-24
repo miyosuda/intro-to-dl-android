@@ -36,10 +36,13 @@ import java.util.StringTokenizer;
 public class JavaDigitDetector {
 	private static final String TAG = "JavaDigitDetector";
 
+	private static final int INPUT_SIZE = 28 * 28;
+	private static final int OUTPUT_SIZE = 10;
+	
 	// 784x10のweight値
-	private float[][] weightW = new float[784][10];
+	private float[][] weightW = new float[INPUT_SIZE][OUTPUT_SIZE];
 	// 10個のbias値
-	private float[] weightB = new float[10];
+	private float[] weightB = new float[OUTPUT_SIZE];
 
 	/**
 	 * シンプルなニューラルネットによる文字認識を行う.
@@ -49,8 +52,8 @@ public class JavaDigitDetector {
 	 */
 	public int detectDigit(int[] pixels) {
 		// 0 ~ 255 のpixel値を 0.0 ~ 1.0 のfloatに変換し、それをinputとする.
-		float[] input = new float[784];
-		for (int i = 0; i < 784; ++i) {
+		float[] input = new float[INPUT_SIZE];
+		for (int i = 0; i < INPUT_SIZE; ++i) {
 			input[i] = (float) pixels[i] * (1.0f / 255.0f);
 		}
 
@@ -58,21 +61,21 @@ public class JavaDigitDetector {
 		float[] output = new float[10];
 
 		// input と weightW の掛け算を行う
-		for (int j = 0; j < 784; ++j) {
-			for (int i = 0; i < 10; ++i) {
+		for (int j = 0; j < INPUT_SIZE; ++j) {
+			for (int i = 0; i < OUTPUT_SIZE; ++i) {
 				output[i] += input[j] * weightW[j][i];
 			}
 		}
 
 		// それに weightB を足す
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < OUTPUT_SIZE; ++i) {
 			output[i] += weightB[i];
 		}
 
 		// SoftMax関数を通して合計を1にしておく
 		output = softMax(output);
 
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < OUTPUT_SIZE; ++i) {
 			Log.i(TAG, "output[" + i + "]=" + output[i]);
 		}
 
@@ -137,16 +140,16 @@ public class JavaDigitDetector {
 		}
 
 		// weightWの設定
-		for (int j = 0; j < 784; ++j) {
+		for (int j = 0; j < INPUT_SIZE; ++j) {
 			String line = linesW.get(j);
 			float values[] = splitLine(line);
-			for (int i = 0; i < 10; ++i) {
+			for (int i = 0; i < OUTPUT_SIZE; ++i) {
 				weightW[j][i] = values[i];
 			}
 		}
 
 		// weightBの設定
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < OUTPUT_SIZE; ++i) {
 			String line = linesB.get(i);
 			weightB[i] = Float.parseFloat(line);
 		}
@@ -159,7 +162,7 @@ public class JavaDigitDetector {
 	 */
 	private float[] splitLine(String line) {
 		StringTokenizer st = new StringTokenizer(line, ",");
-		float[] ret = new float[10];
+		float[] ret = new float[OUTPUT_SIZE];
 		for (int i = 0; i < ret.length; ++i) {
 			String token = st.nextToken();
 			ret[i] = Float.parseFloat(token);
