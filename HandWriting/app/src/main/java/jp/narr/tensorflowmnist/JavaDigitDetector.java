@@ -29,9 +29,9 @@ import java.util.StringTokenizer;
 
 /**
  * Javaによる手書き文字認識. (低精度)
- *
+ * <p/>
  * (判りやすさ優先であえてマジックナンバーを残しています)
- *
+ * <p/>
  * <p/>
  * Created by miyoshi on 16/02/24.
  */
@@ -56,6 +56,10 @@ public class JavaDigitDetector {
 			input[i] = (float) pixels[i] * (1.0f / 255.0f);
 		}
 
+		return detectDigitSub(input);
+	}
+
+	int detectDigitSub(float[] input) {
 		// 10個の出力値を準備
 		float[] output = new float[10];
 
