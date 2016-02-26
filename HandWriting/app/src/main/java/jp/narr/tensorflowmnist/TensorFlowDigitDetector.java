@@ -18,11 +18,12 @@ package jp.narr.tensorflowmnist;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 
 /**
  * Handwritten digit detector.
  * TensorFlowを使った文字認識.
- *
+ * <p/>
  * <p/>
  * Created by miyoshi on 16/01/17.
  */

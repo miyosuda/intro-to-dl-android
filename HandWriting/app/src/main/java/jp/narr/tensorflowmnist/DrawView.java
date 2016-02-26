@@ -35,6 +35,8 @@ public class DrawView extends View {
 
 	private float mTmpPoints[] = new float[2];
 
+	private boolean mDebugApplyingImage = false;
+
 	public DrawView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
@@ -100,7 +102,9 @@ public class DrawView extends View {
 			startIndex = 0;
 		}
 
-		DrawRenderer.renderModel(mOffscreenCanvas, mModel, mPaint, startIndex);
+		if (!mDebugApplyingImage) {
+			DrawRenderer.renderModel(mOffscreenCanvas, mModel, mPaint, startIndex);
+		}
 		canvas.drawBitmap(mOffscreenBitmap, mMatrix, mPaint);
 
 		mDrawnLineSize = mModel.getLineSize();
@@ -170,5 +174,10 @@ public class DrawView extends View {
 			retPixels[i] = 0xff - b;
 		}
 		return retPixels;
+	}
+
+	public Bitmap getBitmapForDebug() {
+		mDebugApplyingImage = true;
+		return mOffscreenBitmap;
 	}
 }

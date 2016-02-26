@@ -16,6 +16,7 @@
 
 package jp.narr.tensorflowmnist;
 
+import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -40,10 +41,10 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 	private PointF mTmpPiont = new PointF();
 
 	// Javaによる文字認識を行う場合
-	//private JavaDigitDetector mDetector = new JavaDigitDetector();
+	private JavaDigitDetector mDetector = new JavaDigitDetector();
 
 	// TensorFlowを使った文字認識を行う場合
-	private TensorFlowDigitDetector mDetector = new TensorFlowDigitDetector();
+	//private TensorFlowDigitDetector mDetector = new TensorFlowDigitDetector();
 
 	@SuppressWarnings("SuspiciousNameCombination")
 	@Override
@@ -151,10 +152,27 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 	}
 
 	private void onClearClicked() {
+		/*
 		mModel.clear();
 		mDrawView.reset();
 		mDrawView.invalidate();
+		*/
+
+		debugSetImage();
 
 		mResultText.setText("");
+	}
+
+	private DebugData mDebugData = null;
+
+	private void debugSetImage() {
+		if( mDebugData == null ) {
+			mDebugData = new DebugData();
+			mDebugData.setup(this);
+		}
+
+		Bitmap bitmap = mDrawView.getBitmapForDebug();
+		mDebugData.applyToBitmap(bitmap, 0);
+		mDrawView.invalidate();
 	}
 }
