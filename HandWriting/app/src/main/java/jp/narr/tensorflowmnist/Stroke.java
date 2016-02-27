@@ -92,42 +92,15 @@ public class Stroke {
 
 	/**
 	 * <!-- calcWeight(): -->
-	 * <p/>
-	 * FIXME リニアになっていないので修正が必要.
 	 */
-	private float getWeight(int j, int i, float rate) {
-		float w0 = mWeight[j * WEIGHT_WIDTH + i];
-		return w0;
-		/*
-		float rate_ = 1.0f - rate;
-
-		float ret = w0 * rate_ + w1 * rate;
-		// FIXME 本来無くてもよいはずの処理
-		if (ret > 1.0f) {
-			ret = 1.0f;
-		}
-		if (ret < 0.0f) {
-			ret = 0.0f;
-		}
-		return ret;
-		*/
+	private float getWeight(int j, int i) {
+		return mWeight[j * WEIGHT_WIDTH + i];
 	}
 
 	/**
 	 * <!-- drawAADot(): -->
-	 *
-	 * @param rate         weightの間を補間するためのrate. pressureから求まる値( 0.0~1.0)
-	 * @param multiplyRate 最終的にもとまった値に対して線形に掛け算するrate.
-	 *                     <p/>
-	 *                     drawlineで最後に半端で残ったピクセルに関しては、
-	 *                     rateでのweight補間(weight0とweight1の補間)した値に対してさらに、
-	 *                     multiplyRateをかける必要がある.
-	 *                     最後の半端な点以外の点に関してはすべて同じmutiplyRate(1AAdotが表現する 線分の長さに相当)になっている.
-	 *                     <p/>
-	 *                     ==> multiplyRateは現在1.0でしか使用していない. 様子を見てこれて問題なければ消す事. [TODO]
 	 */
-	private void drawAADot(float x, float y, int[] pixels, int w, int h,
-	                       float rate, float multiplyRate) {
+	private void drawAADot(float x, float y, int[] pixels, int w, int h ) {
 
 		// x,yがマイナスの時もあるので、単純なintキャスト(ix=(int)x)ではだめ.
 		int ix = (int) Math.floor(x);
@@ -168,14 +141,12 @@ public class Stroke {
 		int i, j;
 		for (j = 0; j < bw - 1; ++j) { // y
 			for (i = 0; i < bw - 1; ++i) { // x
-				float a00 = getWeight(off + j, off + i, rate) * multiplyRate;
-				float a01 = getWeight(off + j, off + i + 1, rate) * multiplyRate;
-				float a10 = getWeight(off + j + 1, off + i, rate) * multiplyRate;
-				float a11 = getWeight(off + j + 1, off + i + 1, rate)
-						* multiplyRate;
-				float w0 = getBilinearSample(tx, tx_, ty, ty_, a00, a01, a10,
-						a11);
-				boolean ret = drawDot(sx + i, sy + j, w0, pixels, w, h);
+				float a00 = getWeight(off + j, off + i);
+				float a01 = getWeight(off + j, off + i + 1);
+				float a10 = getWeight(off + j + 1, off + i);
+				float a11 = getWeight(off + j + 1, off + i + 1);
+				float w0 = getBilinearSample(tx, tx_, ty, ty_, a00, a01, a10, a11);
+				drawDot(sx + i, sy + j, w0, pixels, w, h);
 			}
 		}
 	}
@@ -221,7 +192,7 @@ public class Stroke {
 		int h = imageBuffer.getHeight();
 
 		for (; len > 0.0f; len -= mInterval) {
-			drawAADot(lx, ly, pixels, w, h, 1.0f, 1.0f);
+			drawAADot(lx, ly, pixels, w, h);
 			lx += dx;
 			ly += dy;
 			mDelayLength += mInterval;
