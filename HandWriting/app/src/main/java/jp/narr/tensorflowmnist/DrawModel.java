@@ -1,13 +1,8 @@
 package jp.narr.tensorflowmnist;
 
-import android.graphics.Color;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by miyoshi on 16/02/27.
- */
 public class DrawModel {
 	private transient LineCommand currentLine;
 
@@ -50,7 +45,7 @@ public class DrawModel {
 
 	public void endLine() {
 		if( currentLine != null ) {
-			currentLine.close();
+			//currentLine.close();
 			currentLine = null;			
 		}
 	}

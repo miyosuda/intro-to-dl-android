@@ -4,9 +4,12 @@ public class DrawRenderer {
 
 	//@formatter:off
     private static Stroke[] penStrokes = new Stroke[] {
-		//new Stroke(1.0f, 0.0f, 1.0f, 0.2f, 0.5f, Stroke.EDGE_TYPE_SOFT),
-		//new Stroke(1.2f, 0.0f, 1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_SOFT),
-		new Stroke(1.2f, 0.0f, 1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
+		//new Stroke(1.0f, 0.2f, 0.5f, Stroke.EDGE_TYPE_SOFT),
+		new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_SOFT),
+		//new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
+		//new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
+		//new Stroke(1.0f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
+		//new Stroke(1.1f, 0.4f, 0.3f, Stroke.EDGE_TYPE_HARD),
 	};
     //@formatter:on
 

@@ -1,7 +1,5 @@
 package jp.narr.tensorflowmnist;
 
-import android.util.Log;
-
 public class Stroke {
 	// ブラシ角のタイプ
 	public static final int EDGE_TYPE_SOFT = 0; // ソフトエッジ (エッジぼやけ気味)
@@ -12,7 +10,6 @@ public class Stroke {
 	public static final int WEIGHT_WIDTH = MAX_RADIUS * 2 + 1; // weightテーブル幅
 
 	private float[] weight0 = new float[WEIGHT_WIDTH * WEIGHT_WIDTH]; // 筆圧最小時weight
-	private float[] weight1 = new float[WEIGHT_WIDTH * WEIGHT_WIDTH]; // 筆圧最大時weight
 
 	private int brushWidth; // 実際にweightが入っている部分のブラシ幅(必ず奇数になる)
 	private float delayLength; // 前回のdraw時にあまった長さ
@@ -86,9 +83,9 @@ public class Stroke {
 	 */
 	private float getWeight(int j, int i, float rate) {
 		float w0 = weight0[j * WEIGHT_WIDTH + i];
-		float w1 = weight1[j * WEIGHT_WIDTH + i];
+		return w0;
+		/*
 		float rate_ = 1.0f - rate;
-		// return w0 * rate_ + w1 * rate;
 
 		float ret = w0 * rate_ + w1 * rate;
 		// FIXME 本来無くてもよいはずの処理
@@ -99,6 +96,7 @@ public class Stroke {
 			ret = 0.0f;
 		}
 		return ret;
+		*/
 	}
 
 	/**
@@ -116,8 +114,6 @@ public class Stroke {
 	 */
 	private void drawAADot(float x, float y, int[] pixels, int w, int h,
 	                       float rate, float multiplyRate) {
-
-		Log.i("line", "x=" + x + " y=" + y); //..
 
 		// x,yがマイナスの時もあるので、単純なintキャスト(ix=(int)x)ではだめ.
 		int ix = (int) Math.floor(x);
@@ -174,10 +170,9 @@ public class Stroke {
 	 * <!-- Stroke(): -->
 	 */
 	public Stroke(float radius0, float thickness0,
-	              float radius1, float thickness1,
 	              float interval, int edgeType) {
 		delayLength = 0.0f;
-		setBrush(radius0, thickness0, radius1, thickness1, interval, edgeType);
+		setBrush(radius0, thickness0, interval, edgeType);
 	}
 
 	/**
@@ -270,16 +265,9 @@ public class Stroke {
 	/**
 	 * <!-- setBrush(): -->
 	 */
-	private void setBrush(float radius0, float thickness0, float radius1,
-	                      float thickness1, float interval_, int edgeType) {
-		if (radius1 < radius0) {
-			radius1 = radius0;
-		}
+	private void setBrush(float radius0, float thickness0, float interval_, int edgeType) {
 		if (radius0 > MAX_RADIUS - 1) {
 			radius0 = (float) MAX_RADIUS - 1;
-		}
-		if (radius1 > MAX_RADIUS - 1) {
-			radius1 = (float) MAX_RADIUS - 1;
 		}
 
 		int i, j;
@@ -292,19 +280,15 @@ public class Stroke {
 				if (edgeType == EDGE_TYPE_SOFT) {
 					weight0[j * WEIGHT_WIDTH + i] = calcWeightSoft(r, radius0,
 							thickness0);
-					weight1[j * WEIGHT_WIDTH + i] = calcWeightSoft(r, radius1,
-							thickness1);
 				} else {
 					weight0[j * WEIGHT_WIDTH + i] = calcWeightHard(r, radius0,
 							thickness0);
-					weight1[j * WEIGHT_WIDTH + i] = calcWeightHard(r, radius1,
-							thickness1);
 				}
 			}
 		}
 
 		// FIXME 値の設定はまだ仮
-		brushWidth = ((int) (radius1) + 1) * 2 + 1;
+		brushWidth = ((int) (radius0) + 1) * 2 + 1;
 
 		interval = interval_;
 	}
