@@ -1,100 +1,80 @@
-/*
-   Copyright 2016 Narrative Nights Inc. All Rights Reserved.
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
-
 package jp.narr.tensorflowmnist;
+
+import android.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by miyoshi on 16/02/27.
+ */
 public class DrawModel {
+	private transient LineCommand currentLine;
 
-	public static class LineElem {
-		public float x;
-		public float y;
+	private int width;
+	private int height;
 
-		private LineElem(float x, float y) {
-			this.x = x;
-			this.y = y;
-		}
-	}
-
-	public static class Line {
-		private List<LineElem> elems = new ArrayList<>();
-
-		private Line() {
-		}
-
-		private void addElem(LineElem elem) {
-			elems.add(elem);
-		}
-
-		public int getElemSize() {
-			return elems.size();
-		}
-
-		public LineElem getElem(int index) {
-			return elems.get(index);
-		}
-	}
-
-	private Line mCurrentLine;
-
-	private int mWidth;  // pixel width = 28
-	private int mHeight; // pixel height = 28
-
-	private List<Line> mLines = new ArrayList<>();
+	private int undoCursorIndex;
+	private List<LineCommand> commands = new ArrayList<>();
 
 	public DrawModel(int width, int height) {
-		this.mWidth = width;
-		this.mHeight = height;
+		this.width = width;
+		this.height = height;
 	}
 
 	public int getWidth() {
-		return mWidth;
+		return width;
 	}
 
 	public int getHeight() {
-		return mHeight;
+		return height;
 	}
 
-	public void startLine(float x, float y) {
-		mCurrentLine = new Line();
-		mCurrentLine.addElem(new LineElem(x, y));
-		mLines.add(mCurrentLine);
+	public void startLine(float x, float y, float pressure) {
+		clearHistoryFromNow();
+		
+		currentLine = new LineCommand();
+		currentLine.addPoint(new LinePoint(x, y, pressure));
+		commands.add(currentLine);
+		undoCursorIndex = commands.size();
 	}
-
-	public void endLine() {
-		mCurrentLine = null;
-	}
-
-	public void addLineElem(float x, float y) {
-		if (mCurrentLine != null) {
-			mCurrentLine.addElem(new LineElem(x, y));
+	
+	private void clearHistoryFromNow() {
+		if (undoCursorIndex < commands.size()) {
+			int size = commands.size();
+			for (int i = size - 1; i >= undoCursorIndex; --i) {
+				commands.remove(i);
+			}
 		}
 	}
 
-	public int getLineSize() {
-		return mLines.size();
+	public void endLine() {
+		if( currentLine != null ) {
+			currentLine.close();
+			currentLine = null;			
+		}
 	}
 
-	public Line getLine(int index) {
-		return mLines.get(index);
+	public void addLinePoint(float x, float y, float pressure) {
+		if (currentLine != null) {
+			currentLine.addPoint(new LinePoint(x, y, pressure));
+		}
+	}
+
+	/**
+	 * @return 表示用にundoCursorの位置までを返す
+	 */
+	public int getLineSize() {
+		return undoCursorIndex;
+	}
+
+	public LineCommand getCommand(int index) {
+		return commands.get(index);
 	}
 
 	public void clear() {
-		mLines.clear();
+		commands.clear();
+		undoCursorIndex = 0;
+		currentLine = null;
 	}
 }

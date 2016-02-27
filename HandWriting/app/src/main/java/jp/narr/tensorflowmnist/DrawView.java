@@ -26,12 +26,12 @@ public class DrawView extends View {
 	private DrawModel mModel;
 	// 28x28 pixel Bitmap
 	private Bitmap mOffscreenBitmap;
-	private Canvas mOffscreenCanvas;
+	private ImageBuffer mOffscreenBuffer;
 
 	private Matrix mMatrix = new Matrix();
 	private Matrix mInvMatrix = new Matrix();
-	private int mDrawnLineSize = 0;
 	private boolean mSetuped = false;
+	private DrawInfo mDrawInfo = new DrawInfo();
 
 	private float mTmpPoints[] = new float[2];
 
@@ -44,18 +44,14 @@ public class DrawView extends View {
 	}
 
 	public void reset() {
-		mDrawnLineSize = 0;
+		mDrawInfo.reset();
 		if (mOffscreenBitmap != null) {
 			mPaint.setColor(Color.WHITE);
-			int width = mOffscreenBitmap.getWidth();
-			int height = mOffscreenBitmap.getHeight();
-			mOffscreenCanvas.drawRect(new Rect(0, 0, width, height), mPaint);
+			mOffscreenBuffer.reset();
 		}
 	}
 
 	private void setup() {
-		mSetuped = true;
-
 		// View size
 		float width = getWidth();
 		float height = getHeight();
@@ -95,15 +91,9 @@ public class DrawView extends View {
 			return;
 		}
 
-		int startIndex = mDrawnLineSize - 1;
-		if (startIndex < 0) {
-			startIndex = 0;
-		}
-
-		DrawRenderer.renderModel(mOffscreenCanvas, mModel, mPaint, startIndex);
+		DrawRenderer.renderModel(mOffscreenBuffer, mModel, mDrawInfo);
+		mOffscreenBuffer.copyToBitmap(mOffscreenBitmap);
 		canvas.drawBitmap(mOffscreenBitmap, mMatrix, mPaint);
-
-		mDrawnLineSize = mModel.getLineSize();
 	}
 
 	/**
@@ -130,7 +120,9 @@ public class DrawView extends View {
 			mOffscreenBitmap.recycle();
 		}
 		mOffscreenBitmap = Bitmap.createBitmap(mModel.getWidth(), mModel.getHeight(), Bitmap.Config.ARGB_8888);
-		mOffscreenCanvas = new Canvas(mOffscreenBitmap);
+		mOffscreenBuffer = new ImageBuffer();
+		mOffscreenBuffer.init(mOffscreenBitmap);
+
 		reset();
 	}
 
@@ -138,7 +130,6 @@ public class DrawView extends View {
 		if (mOffscreenBitmap != null) {
 			mOffscreenBitmap.recycle();
 			mOffscreenBitmap = null;
-			mOffscreenCanvas = null;
 		}
 		reset();
 	}
