@@ -1,43 +1,58 @@
+/*
+   Copyright 2016 Narrative Nights Inc. All Rights Reserved.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 package jp.narr.tensorflowmnist;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
 public class ImageBuffer {
-	private int[] pixels;
-	private int width;
-	private int height;
+	private int[] mPixels;
+	private int mWidth;
+	private int mHeight;
 
 	public void init(Bitmap bitmap) {
-		width = bitmap.getWidth();
-		height = bitmap.getHeight();
+		mWidth = bitmap.getWidth();
+		mHeight = bitmap.getHeight();
 
-		pixels = new int[width * height];
+		mPixels = new int[mWidth * mHeight];
 
-		bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+		bitmap.getPixels(mPixels, 0, mWidth, 0, 0, mWidth, mHeight);
 	}
 
 	public int[] getPixels() {
-		return pixels;
+		return mPixels;
 	}
 	
 	public int getWidth() {
-		return width;
+		return mWidth;
 	}
 
 	public int getHeight() {
-		return height;
+		return mHeight;
 	}
 
 	public void copyToBitmap(Bitmap bitmap) {
-		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+		bitmap.setPixels(mPixels, 0, mWidth, 0, 0, mWidth, mHeight);
 	}
 	
 	public void reset() {
 		int bgColor = Color.WHITE;
-		int length = pixels.length;
+		int length = mPixels.length;
 		for (int i = 0; i < length; ++i) {
-			pixels[i] = bgColor;
+			mPixels[i] = bgColor;
 		}
 	}
 }

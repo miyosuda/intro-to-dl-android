@@ -1,58 +1,72 @@
+/*
+   Copyright 2016 Narrative Nights Inc. All Rights Reserved.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 package jp.narr.tensorflowmnist;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DrawModel {
-	private transient LineCommand currentLine;
+	private transient LineCommand mCurrentLine;
 
-	private int width;
-	private int height;
+	private int mWidth;
+	private int mHeight;
 
-	private int undoCursorIndex;
-	private List<LineCommand> commands = new ArrayList<>();
+	private int undomUndoCursorIndexIndex;
+	private List<LineCommand> mCommands = new ArrayList<>();
 
 	public DrawModel(int width, int height) {
-		this.width = width;
-		this.height = height;
+		this.mWidth = width;
+		this.mHeight = height;
 	}
 
 	public int getWidth() {
-		return width;
+		return mWidth;
 	}
 
 	public int getHeight() {
-		return height;
+		return mHeight;
 	}
 
 	public void startLine(float x, float y, float pressure) {
 		clearHistoryFromNow();
 		
-		currentLine = new LineCommand();
-		currentLine.addPoint(new LinePoint(x, y, pressure));
-		commands.add(currentLine);
-		undoCursorIndex = commands.size();
+		mCurrentLine = new LineCommand();
+		mCurrentLine.addPoint(new LinePoint(x, y, pressure));
+		mCommands.add(mCurrentLine);
+		undomUndoCursorIndexIndex = mCommands.size();
 	}
 	
 	private void clearHistoryFromNow() {
-		if (undoCursorIndex < commands.size()) {
-			int size = commands.size();
-			for (int i = size - 1; i >= undoCursorIndex; --i) {
-				commands.remove(i);
+		if (undomUndoCursorIndexIndex < mCommands.size()) {
+			int size = mCommands.size();
+			for (int i = size - 1; i >= undomUndoCursorIndexIndex; --i) {
+				mCommands.remove(i);
 			}
 		}
 	}
 
 	public void endLine() {
-		if( currentLine != null ) {
-			//currentLine.close();
-			currentLine = null;			
+		if( mCurrentLine != null ) {
+			mCurrentLine = null;
 		}
 	}
 
 	public void addLinePoint(float x, float y, float pressure) {
-		if (currentLine != null) {
-			currentLine.addPoint(new LinePoint(x, y, pressure));
+		if (mCurrentLine != null) {
+			mCurrentLine.addPoint(new LinePoint(x, y, pressure));
 		}
 	}
 
@@ -60,16 +74,16 @@ public class DrawModel {
 	 * @return 表示用にundoCursorの位置までを返す
 	 */
 	public int getLineSize() {
-		return undoCursorIndex;
+		return undomUndoCursorIndexIndex;
 	}
 
 	public LineCommand getCommand(int index) {
-		return commands.get(index);
+		return mCommands.get(index);
 	}
 
 	public void clear() {
-		commands.clear();
-		undoCursorIndex = 0;
-		currentLine = null;
+		mCommands.clear();
+		undomUndoCursorIndexIndex = 0;
+		mCurrentLine = null;
 	}
 }

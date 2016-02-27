@@ -1,3 +1,18 @@
+/*
+   Copyright 2016 Narrative Nights Inc. All Rights Reserved.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 package jp.narr.tensorflowmnist;
 
 public class Stroke {
@@ -9,11 +24,11 @@ public class Stroke {
 	public static final int WEIGHT_HWIDTH = MAX_RADIUS; // weightテーブル半幅
 	public static final int WEIGHT_WIDTH = MAX_RADIUS * 2 + 1; // weightテーブル幅
 
-	private float[] weight0 = new float[WEIGHT_WIDTH * WEIGHT_WIDTH]; // 筆圧最小時weight
+	private float[] mWeight = new float[WEIGHT_WIDTH * WEIGHT_WIDTH]; // 筆圧最小時weight
 
-	private int brushWidth; // 実際にweightが入っている部分のブラシ幅(必ず奇数になる)
-	private float delayLength; // 前回のdraw時にあまった長さ
-	private float interval; // ブラシの1点を打つ間隔
+	private int mBrushWidth; // 実際にweightが入っている部分のブラシ幅(必ず奇数になる)
+	private float mDelayLength; // 前回のdraw時にあまった長さ
+	private float mInterval; // ブラシの1点を打つ間隔
 
 	private static int lowerClip(int v) {
 		if (v < 0) {
@@ -42,7 +57,6 @@ public class Stroke {
 		int b = (pixel & 0xff);
 		int g = (pixel & 0xff00) >>> 8;
 		int r = (pixel & 0xff0000) >>> 16;
-		int a = (pixel & 0xff000000) >>> 24;
 
 		int v_ = (int) (255.0f * v);
 
@@ -82,7 +96,7 @@ public class Stroke {
 	 * FIXME リニアになっていないので修正が必要.
 	 */
 	private float getWeight(int j, int i, float rate) {
-		float w0 = weight0[j * WEIGHT_WIDTH + i];
+		float w0 = mWeight[j * WEIGHT_WIDTH + i];
 		return w0;
 		/*
 		float rate_ = 1.0f - rate;
@@ -123,7 +137,7 @@ public class Stroke {
 		float ty = y - (float) (iy);
 
 		int sx, sy; // 書き込みバッファのどこの位置を基準としてはじめるか.
-		int bw = brushWidth; // ブラシweight幅
+		int bw = mBrushWidth; // ブラシweight幅
 		int hbw = (bw - 1) / 2; // ブラシ幅の片側半分
 
 		if (tx < 0.5f) {
@@ -169,10 +183,10 @@ public class Stroke {
 	/**
 	 * <!-- Stroke(): -->
 	 */
-	public Stroke(float radius0, float thickness0,
+	public Stroke(float radius, float thickness,
 	              float interval, int edgeType) {
-		delayLength = 0.0f;
-		setBrush(radius0, thickness0, interval, edgeType);
+		mDelayLength = 0.0f;
+		setBrush(radius, thickness, interval, edgeType);
 	}
 
 	/**
@@ -190,16 +204,16 @@ public class Stroke {
 
 		float length = (float) Math.sqrt(wx * wx + wy * wy);
 
-		float dx = wx / length * interval;
-		float dy = wy / length * interval;
-		float drate = wrate / length * interval;
+		float dx = wx / length * mInterval;
+		float dy = wy / length * mInterval;
+		float drate = wrate / length * mInterval;
 
 		float lx = x0;
 		float ly = y0;
 		float rate = rate0;
 
 		// delay length分の反映
-		float t = delayLength / interval;
+		float t = mDelayLength / mInterval;
 		float tdx = dx * t;
 		float tdy = dy * t;
 		float tdrate = drate * t;
@@ -208,26 +222,26 @@ public class Stroke {
 		rate += tdrate;
 
 		float len = length;
-		len -= delayLength;
+		len -= mDelayLength;
 		// 一旦ここでのlineの長さ分delayLengthを引いておく.
 		// (そして1dot打つ毎に、加算していく)
-		delayLength -= length;
+		mDelayLength -= length;
 
 		int[] pixels = imageBuffer.getPixels();
 		int w = imageBuffer.getWidth();
 		int h = imageBuffer.getHeight();
 
-		for (; len > 0.0f; len -= interval) {
+		for (; len > 0.0f; len -= mInterval) {
 			drawAADot(lx, ly, pixels, w, h, rate, 1.0f);
 			lx += dx;
 			ly += dy;
 			rate += drate;
-			delayLength += interval;
+			mDelayLength += mInterval;
 		}
 	}
 
 	public void reset() {
-		delayLength = 0;
+		mDelayLength = 0;
 	}
 
 	/**
@@ -265,9 +279,9 @@ public class Stroke {
 	/**
 	 * <!-- setBrush(): -->
 	 */
-	private void setBrush(float radius0, float thickness0, float interval_, int edgeType) {
-		if (radius0 > MAX_RADIUS - 1) {
-			radius0 = (float) MAX_RADIUS - 1;
+	private void setBrush(float radius, float thickness, float interval_, int edgeType) {
+		if (radius > MAX_RADIUS - 1) {
+			radius = (float) MAX_RADIUS - 1;
 		}
 
 		int i, j;
@@ -278,18 +292,16 @@ public class Stroke {
 				float r = (float) Math.sqrt((float) (dx * dx + dy * dy));
 
 				if (edgeType == EDGE_TYPE_SOFT) {
-					weight0[j * WEIGHT_WIDTH + i] = calcWeightSoft(r, radius0,
-							thickness0);
+					mWeight[j * WEIGHT_WIDTH + i] = calcWeightSoft(r, radius, thickness);
 				} else {
-					weight0[j * WEIGHT_WIDTH + i] = calcWeightHard(r, radius0,
-							thickness0);
+					mWeight[j * WEIGHT_WIDTH + i] = calcWeightHard(r, radius, thickness);
 				}
 			}
 		}
 
 		// FIXME 値の設定はまだ仮
-		brushWidth = ((int) (radius0) + 1) * 2 + 1;
+		mBrushWidth = ((int) (radius) + 1) * 2 + 1;
 
-		interval = interval_;
+		mInterval = interval_;
 	}
 }
