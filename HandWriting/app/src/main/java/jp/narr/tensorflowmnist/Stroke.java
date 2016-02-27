@@ -191,35 +191,24 @@ public class Stroke {
 
 	/**
 	 * <!-- drawLine(): -->
-	 *
-	 * @param rate0 0.0〜1.0にノーマライズされた筆圧(始点での)
-	 * @param rate1 0.0〜1.0にノーマライズされた筆圧(終点での)
 	 */
-	public void drawLine(float x0, float y0, float rate0, float x1, float y1,
-	                     float rate1, ImageBuffer imageBuffer) {
-
+	public void drawLine(float x0, float y0, float x1, float y1, ImageBuffer imageBuffer) {
 		float wx = x1 - x0;
 		float wy = y1 - y0;
-		float wrate = rate1 - rate0;
-
 		float length = (float) Math.sqrt(wx * wx + wy * wy);
 
 		float dx = wx / length * mInterval;
 		float dy = wy / length * mInterval;
-		float drate = wrate / length * mInterval;
 
 		float lx = x0;
 		float ly = y0;
-		float rate = rate0;
 
 		// delay length分の反映
 		float t = mDelayLength / mInterval;
 		float tdx = dx * t;
 		float tdy = dy * t;
-		float tdrate = drate * t;
 		lx += tdx;
 		ly += tdy;
-		rate += tdrate;
 
 		float len = length;
 		len -= mDelayLength;
@@ -232,10 +221,9 @@ public class Stroke {
 		int h = imageBuffer.getHeight();
 
 		for (; len > 0.0f; len -= mInterval) {
-			drawAADot(lx, ly, pixels, w, h, rate, 1.0f);
+			drawAADot(lx, ly, pixels, w, h, 1.0f, 1.0f);
 			lx += dx;
 			ly += dy;
-			rate += drate;
 			mDelayLength += mInterval;
 		}
 	}

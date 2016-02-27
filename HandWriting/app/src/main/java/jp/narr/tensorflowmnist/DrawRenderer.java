@@ -17,19 +17,16 @@ package jp.narr.tensorflowmnist;
 
 public class DrawRenderer {
 
-	//@formatter:off
-    private static Stroke[] penStrokes = new Stroke[] {
-		//new Stroke(1.0f, 0.2f, 0.5f, Stroke.EDGE_TYPE_SOFT),
-		new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_SOFT),
-		//new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
-		//new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
-		//new Stroke(1.0f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD),
-		//new Stroke(1.1f, 0.4f, 0.3f, Stroke.EDGE_TYPE_HARD),
-	};
-    //@formatter:on
+    private static final Stroke penStroke =
+		//new Stroke(1.0f, 0.2f, 0.5f, Stroke.EDGE_TYPE_SOFT);
+		new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_SOFT);
+		//new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD);
+		//new Stroke(1.2f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD);
+		//new Stroke(1.0f, 0.7f, 0.5f, Stroke.EDGE_TYPE_HARD);
+		//new Stroke(1.1f, 0.4f, 0.3f, Stroke.EDGE_TYPE_HARD);
 
 	private static void renderLine(LineCommand line, int index, ImageBuffer imageBuffer, DrawInfo drawInfo) {
-		Stroke stroke = penStrokes[0];
+		Stroke stroke = penStroke;
 
 		int pointSize = line.getPointSize();
 		if (pointSize < 1) {
@@ -41,7 +38,6 @@ public class DrawRenderer {
 		LinePoint point = line.getPoint(startPointIndex);
 		float lastX = point.x;
 		float lastY = point.y;
-		float lastPressure = point.pressure;
 
 		for (int j = startPointIndex; j < pointSize; ++j) {
 			if (j == 0) {
@@ -51,13 +47,11 @@ public class DrawRenderer {
 			point = line.getPoint(j);
 			float x = point.x;
 			float y = point.y;
-			float pressure = point.pressure;
 
-			stroke.drawLine(lastX, lastY, lastPressure, x, y, pressure, imageBuffer);
+			stroke.drawLine(lastX, lastY, x, y, imageBuffer);
 
 			lastX = x;
 			lastY = y;
-			lastPressure = pressure;
 		}
 	}
 

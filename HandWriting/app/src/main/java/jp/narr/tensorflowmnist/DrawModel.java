@@ -40,11 +40,11 @@ public class DrawModel {
 		return mHeight;
 	}
 
-	public void startLine(float x, float y, float pressure) {
+	public void startLine(float x, float y) {
 		clearHistoryFromNow();
 		
 		mCurrentLine = new LineCommand();
-		mCurrentLine.addPoint(new LinePoint(x, y, pressure));
+		mCurrentLine.addPoint(new LinePoint(x, y));
 		mCommands.add(mCurrentLine);
 		undomUndoCursorIndexIndex = mCommands.size();
 	}
@@ -64,9 +64,9 @@ public class DrawModel {
 		}
 	}
 
-	public void addLinePoint(float x, float y, float pressure) {
+	public void addLinePoint(float x, float y) {
 		if (mCurrentLine != null) {
-			mCurrentLine.addPoint(new LinePoint(x, y, pressure));
+			mCurrentLine.addPoint(new LinePoint(x, y));
 		}
 	}
 
