@@ -88,24 +88,25 @@ public class JavaDigitDetector {
 	 */
 	private float[] softMax(float[] values) {
 		// 各値のexp値
-		float[] exps = new float[values.length];
+		float[] expValues = new float[values.length];
 
 		// 各値のexp値の合計
 		float expSum = 0.0f;
 		for (int i = 0; i < values.length; ++i) {
 			// 各値のexp値を出す
 			float exp = (float) Math.exp(values[i]);
-			exps[i] = exp;
+			expValues[i] = exp;
 			// 合計値を加算
 			expSum += exp;
 		}
 
 		// 合計値で割って、全部のexp値の合計が1になる様にする
 		for (int i = 0; i < values.length; ++i) {
-			exps[i] /= expSum;
+			expValues[i] /= expSum;
 		}
 
-		return exps;
+		// 結果はそれぞれ0.0〜1.0の間の値
+		return expValues;
 	}
 
 	/**
