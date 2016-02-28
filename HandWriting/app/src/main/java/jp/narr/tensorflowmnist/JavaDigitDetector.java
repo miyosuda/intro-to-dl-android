@@ -41,7 +41,7 @@ public class JavaDigitDetector {
 	// 784x10のweight値
 	private float[][] weightW = new float[784][10];
 	// 10個のbias値
-	private float[] weightB = new float[10];
+	private float[] biasB = new float[10];
 
 	/**
 	 * シンプルなニューラルネットによる文字認識を行う.
@@ -66,20 +66,20 @@ public class JavaDigitDetector {
 			}
 		}
 
-		// それに weightB を足す
+		// それに biasB を足す
 		for (int i = 0; i < 10; ++i) {
-			output[i] += weightB[i];
+			output[i] += biasB[i];
 		}
 
 		// SoftMax関数を通して合計を1にしておく
-		output = softMax(output);
+		float[] newOutput = softMax(output);
 
 		for (int i = 0; i < 10; ++i) {
-			Log.i(TAG, "output[" + i + "]=" + output[i]);
+			Log.i(TAG, "output[" + i + "]=" + newOutput[i]);
 		}
 
 		// 最大の値のindexを探す
-		int maxIndex = findMaxIndex(output);
+		int maxIndex = findMaxIndex(newOutput);
 		return maxIndex;
 	}
 
@@ -127,7 +127,7 @@ public class JavaDigitDetector {
 	}
 
 	/**
-	 * Asset内の "w.csv", "b.csv"を読み込み、それぞれ weightW, weightB に
+	 * Asset内の "w.csv", "b.csv"を読み込み、それぞれ weightW, biasB に
 	 * 値をロードする.
 	 */
 	public boolean setup(Context context) {
@@ -150,7 +150,7 @@ public class JavaDigitDetector {
 		// weightBの設定
 		for (int i = 0; i < 10; ++i) {
 			String line = linesB.get(i);
-			weightB[i] = Float.parseFloat(line);
+			biasB[i] = Float.parseFloat(line);
 		}
 
 		return true;
